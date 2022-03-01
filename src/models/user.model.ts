@@ -8,12 +8,15 @@ export interface IUser extends Document {
   password: string;
 }
 
-const UserSchema: Schema = new Schema({
-  email: { type: String, required: true, unique: true },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  password: { type: String, required: true}
-});
+const UserSchema: Schema = new Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    password: { type: String, required: true}
+  },
+  { timestamps: true }
+);
 
 UserSchema.pre<IUser>("save", function(next) {
   // if (this.isModified("password")) {

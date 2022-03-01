@@ -1,12 +1,12 @@
 import express, { Application } from "express";
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import "reflect-metadata";
 import connect from './db'
-import { authRoutes} from './routes'
+import { authRoutes, walletRoutes} from './routes'
 import errorMiddleware from "./middleware/error.middleware";
 
 
@@ -40,10 +40,10 @@ const corsOption = {
 };
 
 app.use(cors(corsOption));
-
+app.use(cookieParser());
 
 app.use('/auth', accountLimiter, authRoutes);
-// app.use('/teams', teamRoutes);
+app.use('/wallets', walletRoutes);
 // app.use('/fixtures', fixtureRoutes);
 // app.use('/search', searchRoutes);
 app.use('/*', (req, res) => {
@@ -57,6 +57,6 @@ app.use(errorMiddleware)
 app.listen(PORT, async() => {
   console.log(`Server started on port ${PORT}`)
   // await initConnection();
-});
+})
 
 export default app;

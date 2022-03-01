@@ -1,7 +1,6 @@
 import CreateUserDto from "dto/user.dto";
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import omit from 'lodash.omit';
 import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
 import DataStoredInToken from '../interfaces/dataStoredInToken';
 import TokenData from '../interfaces/tokenData.interface';
@@ -42,9 +41,8 @@ class AuthenticationService {
       );
       if (isPasswordMatching) {
         const tokenData = this.createToken(user);
-        const cookie = this.createCookie(tokenData);
+        // const cookie = this.createCookie(tokenData);
         return {
-          cookie,
           user: {user, token: tokenData.token}
         };
       } else {
@@ -53,10 +51,6 @@ class AuthenticationService {
     } else {
       throw new WrongCredentialsException();
     }
-  }
-
-  public static createCookie(tokenData: TokenData) {
-    return `Authorization=${tokenData.token}; HttpOnly; Max-Age=${tokenData.expiresIn}`;
   }
   
   static createToken(user: IUser): TokenData {
