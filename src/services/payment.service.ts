@@ -9,7 +9,6 @@ type IPayment = {
 const BASE_URL = 'https://api.paystack.co/charge';
 
 const initiatePayment = async (email: string, request: Record<string, string>): Promise<IPayment> => {
-  console.log(request)
   const data: AxiosRequestConfig = {
     method: 'POST',
     url: BASE_URL,
@@ -24,14 +23,8 @@ const initiatePayment = async (email: string, request: Record<string, string>): 
       },
     }
   };
-  try {
-    const response = await axios(data);
-    console.log(response)
-    return { reference: response.data.data.reference, amount: request.amount};
-  } catch (error) {
-    console.log(error)
-    throw error;
-  }
+  const response = await axios(data);
+  return { reference: response.data.data.reference, amount: request.amount};
 };
 
 export default initiatePayment;

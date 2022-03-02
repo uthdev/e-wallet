@@ -1,6 +1,6 @@
 import initiatePayment from "./payment.service";
 import { Funding, Transaction, Wallet } from '../models'
-import { TransactionType } from "../models/Transaction.model";
+import { TransactionType } from "../models/transaction.model";
 import NotFoundException from "../exceptions/NotFoundException";
 // import { IWallet } from "models/wallet.model";
 import NotAuthorizedException from "../exceptions/NotAuthorizedException";
@@ -34,12 +34,10 @@ class WalletService {
     const wallet = await Wallet.findOne({
      customerId
     });
-    console.log('sender', wallet)
 
     const receivingWallet = await Wallet.findOne({
       accountNumber
     });
-    console.log('recipient', receivingWallet)
 
     if (!receivingWallet) {
       throw new NotFoundException(`Wallet ${accountNumber} not found`);
