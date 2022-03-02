@@ -22,7 +22,7 @@ The api is hosted on [Heroku](https://uth-wallet.herokuapp.com/)
 
 ---
 ## Documentation
-The api is documented with [Postman](https://documenter.getpostman.com/view/6265858/UVkjwyJB)
+The api is documented with [Postman](https://documenter.getpostman.com/view/6265858/UVktoYEg)
 
 
 ---
