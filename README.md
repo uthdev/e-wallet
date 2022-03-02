@@ -40,7 +40,7 @@ The api is documented with [Postman](https://documenter.getpostman.com/view/6265
 
 ---
 ## API Information
-The API is hosted on [https://uthdev-premier.herokuapp.com/](https://uthdev-premier.herokuapp.com/)
+The API is hosted on [https://uth-wallet.herokuapp.com](https://uth-wallet.herokuapp.com)
 
 METHOD |  RESOURCE   |     DESCRIPTION                | ENDPOINTS
 -------|-------------|--------------------------------|-----------
