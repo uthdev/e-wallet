@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connect from './db'
-import { authRoutes, walletRoutes} from './routes'
+import { authRoutes,  walletRoutes} from './routes'
 import errorMiddleware from "./middleware/error.middleware";
 
 
@@ -44,8 +44,6 @@ app.use(cookieParser());
 
 app.use('/auth', accountLimiter, authRoutes);
 app.use('/wallets', walletRoutes);
-// app.use('/fixtures', fixtureRoutes);
-// app.use('/search', searchRoutes);
 app.use('/*', (req, res) => {
   res.status(200).json({
     message: 'Welcome to the E-wallet API',

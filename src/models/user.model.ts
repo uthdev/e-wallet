@@ -19,11 +19,8 @@ const UserSchema: Schema = new Schema(
 );
 
 UserSchema.pre<IUser>("save", function(next) {
-  // if (this.isModified("password")) {
     this.password = hashPassword(this.password);
-    console.log(this.password);
     next()
-  // }
 });
 
 // Export the model and return your IUser interface

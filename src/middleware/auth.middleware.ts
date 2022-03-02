@@ -1,8 +1,8 @@
 // import redis from 'redis';
-import { UserEntity } from '../db/entity/User';
+// import { UserEntity } from '../db/entity/User';
 import { NextFunction, Response } from 'express';
-import * as jwt from 'jsonwebtoken';
-import { JwtPayload } from 'jsonwebtoken';
+// import * as jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import AuthenticationTokenMissingException from '../exceptions/AuthenticationTokenMissingException';
 import WrongAuthenticationTokenException from '../exceptions/WrongAuthenticationTokenException';
 import RequestWithUser from '../interfaces/requestWithUser.interface';
@@ -30,8 +30,5 @@ const authMiddleware = async (request: RequestWithUser, response: Response, next
     next(new AuthenticationTokenMissingException());
   }
 }
-
-
-
 
 export default authMiddleware;

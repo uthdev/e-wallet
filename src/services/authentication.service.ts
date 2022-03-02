@@ -1,7 +1,7 @@
 import CreateUserDto from "dto/user.dto";
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import UserWithThatEmailAlreadyExistsException from '../exceptions/UserWithThatEmailAlreadyExistsException';
+import UserWithThatEmailAlreadyExistsException from '../exceptions/ResourceExitsException';
 import DataStoredInToken from '../interfaces/dataStoredInToken';
 import TokenData from '../interfaces/tokenData.interface';
 import User, { IUser } from '../models/user.model'
@@ -15,18 +15,14 @@ class AuthenticationService {
   // public user = User
 
   static async register(userData: CreateUserDto) {
-    // const userRepository = getRepository(UserEntity);
     if (
       await User.findOne({ email: userData.email })
     ) {
-      throw new UserWithThatEmailAlreadyExistsException(userData.email);
+      throw new UserWithThatEmailAlreadyExistsException(`User with email ${userData.email} already exists`);
     }
-    // const hashedPassword = await bcrypt.hash(userData.password, 10);
     const newUser  = new User(userData)
     const user = await newUser.save();
-    console.log(user);
     
-    // return response.status(201).json(omit(user, ["password"]))
     return {
       user,
     };
@@ -59,7 +55,6 @@ class AuthenticationService {
     const dataStoredInToken: DataStoredInToken = {
       _id: user._id,
     };
-    console.log(dataStoredInToken);
     return {
       expiresIn,
       token: jwt.sign(dataStoredInToken, secret, { expiresIn }),

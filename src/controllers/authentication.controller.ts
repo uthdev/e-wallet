@@ -37,7 +37,6 @@ class AuthenticationController {
     const logInData: LogInDto = request.body;
     try {
       const { user } = await AuthenticationService.login(logInData);
-      console.log(user);
       
       response.cookie('access_token', user.token, {
         maxAge: 60 * 60 * 1000, // 1 hour

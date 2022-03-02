@@ -15,6 +15,7 @@ const walletSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       required: true,
       ref: "users",
+      unique: true
     },
     accountNumber: {type: Number, required: true, unique: true}
   },

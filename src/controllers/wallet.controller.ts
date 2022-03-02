@@ -1,17 +1,27 @@
-
- import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import {
+  Funding,
+  Transaction,
   Wallet
 } from '../models';
 import generateAccountNumber from '../helpers/generateAccountNumber'
 import RequestWithUser from '../interfaces/requestWithUser.interface';
-// import transferService from '../services/transfer.service';
+import WalletService from '../services/wallet.service';
+import ResourceExistsException from '../exceptions/ResourceExitsException';
+import { ObjectId } from 'mongoose/node_modules/mongodb';
+
 
 class WalletController {
 
   static async createWallet(request: RequestWithUser, response: Response, next: NextFunction) {
     try {
       const customerId = request.user?._id;
+      const hasWallet = await Wallet.findOne({
+        customerId
+      });
+      if(hasWallet) {
+        throw new ResourceExistsException('User already has a wallet')
+      }
       const accountNumber = generateAccountNumber()
       const newWallet = new Wallet({ accountNumber, customerId});
       const wallet = await newWallet.save();
@@ -24,25 +34,27 @@ class WalletController {
     }
   }
 
-  // static async transferToWallet(request: Request, response: Response, next: NextFunction) {
-  //   try {
-  //     const customerId = request.id;
-  //     const transfer = await transferService(request.body.amount, request.body.accountNumber, customerId);
-  //     return handleSuccessResponse(response, transfer, 201);
-  //   } catch (error) {
-  //     next(error)
-  //   }
-  // }
+  static async transferToWallet(request: RequestWithUser, response: Response, next: NextFunction) {
+    try {
+      const customerId = request.user?._id;
+      const { amount, accountNumber } = request.body;
+      const { transaction } = await WalletService.transfer(Number(amount), accountNumber, customerId);
+      return response.status(201).json({
+        status: 'success',
+        data: transaction,
+      });
+    } catch (error) {
+      next(error)
+    }
+  }
 
 
   static async getWallet(request: RequestWithUser, response: Response, next: NextFunction) {
     try {
       const customerId = request.user?._id;
-      const walletId = request.params?.id
+      // const walletId = request.params?.id
       const wallet = await Wallet.findOne({
-        where: {
-          customerId, _id: walletId
-        }
+        customerId
       });
       return response.status(200).json({
         status: 'success',
@@ -53,39 +65,58 @@ class WalletController {
     }
   }
 
-  static async getWallets(request: RequestWithUser, response: Response, next: NextFunction) {
+  static async fundWallet (request: RequestWithUser, response: Response, next: NextFunction) {
     try {
       const customerId = request.user?._id;
-      const wallets = await Wallet.find({
+      const email = <string>request.user?.email
+      const funding = await WalletService.fund(customerId, email, request.body);
+      return response.status(201).json({
+        status: 'success',
+        data: funding,
+      })
+    } catch (error) {
+      next(error);
+    }
+  }
+  
+
+
+  static async getWalletTransactions(request: Request, response: Response, next: NextFunction) {
+    try {
+      const {
+        accountNumber
+      } = request.params;
+      const transactions = await Transaction.find({
         where: {
-          customerId
+          $or: [
+            {sender: accountNumber},
+            {recipient: accountNumber},
+          ]
         }
       });
       return response.status(200).json({
         status: 'success',
-        data: wallets
+        data: transactions
       })
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 
-
-  // static async getWalletTransactions(request: Request, response: Response, next: NextFunction) {
-  //   try {
-  //     const {
-  //       accountNumber
-  //     } = request.params;
-  //     const transactions = await Transaction.findAll({
-  //       where: {
-  //         accountNumber
-  //       }
-  //     });
-  //     return handleSuccessResponse(response, transactions, 200);
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
+  static async getWalletFundings(request: RequestWithUser, response: Response, next: NextFunction) {
+    try {
+      const customerId = request.user?._id;
+      const transactions = await Funding.find({
+          customerId: new ObjectId(customerId)
+      });
+      return response.status(200).json({
+        status: 'success',
+        data: transactions
+      })
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default WalletController;
